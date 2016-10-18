@@ -34,6 +34,7 @@ class sou:
         self.model = None
         self.dlist = None
         self.docs = None
+        self.run_settings = None
 
     # Parse speeches
     def parse_speeches(self):
@@ -153,6 +154,10 @@ class sou:
 
         # Check and save model
         assert model.docvecs.count == len(docs)
+        self.run_settings = {
+            'model': str(model),
+            'epochs': epochs,
+            'pretrained': pretrained}
         self.model = model
         if save_ind:
             model.save('doc2vec_dm1')
