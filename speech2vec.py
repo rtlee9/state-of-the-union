@@ -233,7 +233,7 @@ class sou:
             (speeches_dt['speaker'] == speaker) &
             (speeches_dt['date'].str[-4:] == str(year))]['body'].iloc[0]
 
-    # Logistic regression
+    # Get full dataframe for modeling
     def get_df(self):
 
         # Confirm speeches were vectorized
@@ -265,7 +265,7 @@ if __name__ == '__main__':
     # Train wordvecs
     vecs = sou()
     vecs.parse_speeches()
-    vecs.speech2vec()
+    vecs.speech2vec(pretrained=False)
     X, y = vecs.get_df()
 
     # split into train and test sets
