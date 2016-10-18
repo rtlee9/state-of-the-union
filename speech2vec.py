@@ -4,7 +4,7 @@ import collections
 from sklearn.manifold import TSNE
 from sklearn import preprocessing
 from sklearn.feature_selection import VarianceThreshold
-from sklearn.cross_validation import train_test_split, cross_val_score
+from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
