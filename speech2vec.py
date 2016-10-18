@@ -152,6 +152,9 @@ class sou:
             model.alpha -= 0.002
             model.min_alpha = model.alpha
 
+        sys.stdout.write('\n')
+        sys.stdout.flush()
+
         # Check and save model
         assert model.docvecs.count == len(docs)
         self.run_settings = {
