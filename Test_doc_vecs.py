@@ -54,18 +54,10 @@ for p in plan:
     # split into train and test sets
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=0)
-    model = LogisticRegression()
-    model.fit(X_train, y_train)
 
     # Reduce independent variables
     sel = VarianceThreshold(threshold=(.8 * (1 - .8)))
     X_reduced = sel.fit_transform(X)
-    X_normalized = preprocessing.normalize(X_reduced, norm='l2')
-
-    # Logistic regression
-    sel = VarianceThreshold(threshold=(.8 * (1 - .8)))
-    X_reduced = sel.fit_transform(X)
-    # X_normalized = preprocessing.normalize(X.values, norm='l2')
     X_normalized = preprocessing.normalize(X_reduced, norm='l2')
 
     # Cross validate logistic regression
