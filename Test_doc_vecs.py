@@ -62,7 +62,7 @@ for p in plan:
 
     # Cross validate logistic regression
     clf = LogisticRegression()
-    scores = cross_val_score(clf, X_normalized, y, cv=10)
+    scores = cross_val_score(clf, X_reduced, y, cv=10)
     run['logistic'] = scores.mean()
 
     # Random forest
