@@ -41,7 +41,8 @@ for p in plan:
 
     vecs.speech2vec(epochs=p.epochs, pretrained=p.pretrained)
     X, y = vecs.get_df()
-    run = vecs.run_settings
+    run = dict(p._asdict())
+    run.update(vecs.run_settings)
 
     # split into train and test sets
     X_train, X_test, y_train, y_test = train_test_split(
