@@ -127,7 +127,7 @@ class sou:
         # Initialize model
         random.seed(seed)
         cores = multiprocessing.cpu_count()
-        print "Training model on {} cores".format(cores)
+        print "Training {} epochs on {} core(s)".format(epochs, cores)
         if model is None:
             model = doc2vec.Doc2Vec(
                 dm=1, dm_mean=1, size=300, window=8, negative=2,
