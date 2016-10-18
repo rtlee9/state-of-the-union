@@ -62,19 +62,19 @@ for p in plan:
 
     # Cross validate logistic regression
     clf = LogisticRegression()
-    scores = cross_val_score(clf, X_normalized, y, scoring='accuracy', cv=10)
+    scores = cross_val_score(clf, X_normalized, y, cv=10)
     run['logistic'] = scores.mean()
 
     # Random forest
     clf = RandomForestClassifier(
         max_depth=3, min_samples_split=3, random_state=0)
-    scores = cross_val_score(clf, X, y)
+    scores = cross_val_score(clf, X, y, cv=10)
     run['random forest'] = scores.mean()
 
     # GBM
     clf = GradientBoostingClassifier(
         n_estimators=30, learning_rate=1.0, max_depth=3, random_state=0)
-    scores = cross_val_score(clf, X, y)
+    scores = cross_val_score(clf, X, y, cv=10)
     run['GBM'] = scores.mean()
 
     print run
