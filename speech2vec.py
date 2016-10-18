@@ -104,7 +104,8 @@ class sou:
         return norm_text
 
     # Vectorize speeches
-    def speech2vec(self, epochs=3, pretrained=True, save_ind=True, seed=400):
+    def speech2vec(self, epochs=3, pretrained=True, model=None,
+                   save_ind=True, seed=400):
 
         # Confirm speeches were cleaned
         if self.speeches_clean is None:
@@ -126,9 +127,10 @@ class sou:
         random.seed(seed)
         cores = multiprocessing.cpu_count()
         print "Training model on {} cores".format(cores)
-        model = doc2vec.Doc2Vec(
-            dm=1, dm_mean=1, size=300, window=8, negative=2,
-            hs=0, min_count=3, workers=cores, iter=15)
+        if model is None:
+            model = doc2vec.Doc2Vec(
+                dm=1, dm_mean=1, size=300, window=8, negative=2,
+                hs=0, min_count=3, workers=cores, iter=15)
         model.build_vocab(docs)
 
         if pretrained:
