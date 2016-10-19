@@ -1,6 +1,7 @@
 .ipynb_checkpoints/
 venv/
 doc2vec_dm*
+*.bin
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
