@@ -1,6 +1,15 @@
 # coding: utf-8
 
+import sys
+import multiprocessing
 import collections
+import re
+import random
+from datetime import datetime
+
+import numpy as np
+import pandas as pd
+
 from sklearn.manifold import TSNE
 from sklearn import preprocessing
 from sklearn.feature_selection import VarianceThreshold
@@ -8,16 +17,10 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
-import re
+from gensim.models import doc2vec
+
 import matplotlib.pyplot as plt
 import mpld3
-import pandas as pd
-from gensim.models import doc2vec
-import multiprocessing
-import random
-from datetime import datetime
-import sys
-import numpy as np
 
 
 class sou:
@@ -28,7 +31,8 @@ class sou:
 
     # Load president details
     def __init__(self):
-        self.prez_dets = pd.read_csv('prez_list.csv', index_col='president_no')
+        self.prez_dets = pd.read_csv(
+            'data/prez_list.csv', index_col='president_no')
         self.prez_dedup = self.prez_dets.drop_duplicates('president_name')
         self.speeches_clean = None
         self.model = None
@@ -40,7 +44,7 @@ class sou:
     def parse_speeches(self):
 
         # Read text file and split into speeches
-        with open('pg5050.txt') as f:
+        with open('data/pg5050.txt') as f:
             raw = f.read()
         speeches = raw.split('***')
 
@@ -86,7 +90,8 @@ class sou:
             return None
 
     # Convert text to lower-case and strip punctuation/symbols from words
-    def _normalize_text(self, text):
+    @staticmethod
+    def _normalize_text(text):
         # Replace special characters with spaces
         norm_text = text.lower()
         norm_text = re.sub(r'\d', '0', norm_text)
@@ -116,12 +121,10 @@ class sou:
 
         # Normalize text
         docs = []
-        i = 0
         for s in self.speeches_clean:
             words = self._normalize_text(s.body.decode('utf-8')).split()
             tags = ['{}; {}'.format(s.speaker, s.date)]
             docs.append(doc2vec.TaggedDocument(words, tags))
-            i += 1
         self.docs = docs
 
         # Initialize model
@@ -137,7 +140,8 @@ class sou:
         if pretrained:
             # Load pre-trained word vectors from Google news corpus
             model.intersect_word2vec_format(
-                'GoogleNews-vectors-negative300.bin', binary=True, lockf=1.0)
+                'data/GoogleNews-vectors-negative300.bin', binary=True,
+                lockf=1.0)
 
         # Train paragraph vectors
         for epoch in range(epochs):
@@ -163,7 +167,7 @@ class sou:
             'pretrained': pretrained}
         self.model = model
         if save_ind:
-            model.save('doc2vec_dm1')
+            model.save('models/doc2vec_dm1')
 
         # Clean results
         dlist = []
@@ -178,8 +182,8 @@ class sou:
         self.dlist = dlist
 
     # Reduce dimensions with t-SNE
-    def reduce_dims(self, model):
-        vectors = [model.docvecs[v.tags][0] for v in self.docs]
+    def reduce_dims(self):
+        vectors = [self.model.docvecs[v.tags][0] for v in self.docs]
         X_embedded = TSNE(
             n_components=2, perplexity=5).fit_transform(vectors)
         return X_embedded
@@ -189,10 +193,11 @@ class sou:
         return self.reduce_dims(self.model)
 
     # Get plot labels
-    def get_labels(self):
-        prez_list = [s.speaker for s in self.speeches_clean]
-        date_list = [int(s.date[-4:]) for s in self.speeches_clean]
-        party_list = [s.party for s in self.speeches_clean]
+    @staticmethod
+    def get_labels(speeches_clean):
+        prez_list = [s.speaker for s in speeches_clean]
+        date_list = [int(s.date[-4:]) for s in speeches_clean]
+        party_list = [s.party for s in speeches_clean]
         assert len(prez_list) == len(date_list)
 
         labels = zip(prez_list, party_list, date_list)
@@ -200,19 +205,18 @@ class sou:
         return labels
 
     # Get plot colors
-    def get_colors(self):
-        i = 1
+    @staticmethod
+    def get_colors(speeches_clean):
         party_no = {}
-        party_list = [s.party for s in self.speeches_clean]
-        for p in list(set(party_list)):
-            party_no[p] = i
-            i += 1
+        party_list = [s.party for s in speeches_clean]
+        for i, p in enumerate(list(set(party_list))):
+            party_no[p] = i + 1
         return party_no
 
     # Get interactive scatter plo.display()t
     def get_plot(self):
-        labels = self.get_labels()
-        party_no = self.get_colors()
+        labels = self.get_labels(self.speeches_clean)
+        party_no = self.get_colors(self.speeches_clean)
         party_list = [s.party for s in self.speeches_clean]
 
         fig = plt.figure(figsize=(10, 10))
