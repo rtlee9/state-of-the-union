@@ -28,7 +28,8 @@ class sou:
 
     # Load president details
     def __init__(self):
-        self.prez_dets = pd.read_csv('prez_list.csv', index_col='president_no')
+        self.prez_dets = pd.read_csv(
+            'data/prez_list.csv', index_col='president_no')
         self.prez_dedup = self.prez_dets.drop_duplicates('president_name')
         self.speeches_clean = None
         self.model = None
@@ -40,7 +41,7 @@ class sou:
     def parse_speeches(self):
 
         # Read text file and split into speeches
-        with open('pg5050.txt') as f:
+        with open('data/pg5050.txt') as f:
             raw = f.read()
         speeches = raw.split('***')
 
@@ -138,7 +139,8 @@ class sou:
         if pretrained:
             # Load pre-trained word vectors from Google news corpus
             model.intersect_word2vec_format(
-                'GoogleNews-vectors-negative300.bin', binary=True, lockf=1.0)
+                'data/GoogleNews-vectors-negative300.bin', binary=True,
+                lockf=1.0)
 
         # Train paragraph vectors
         for epoch in range(epochs):
@@ -164,7 +166,7 @@ class sou:
             'pretrained': pretrained}
         self.model = model
         if save_ind:
-            model.save('doc2vec_dm1')
+            model.save('models/doc2vec_dm1')
 
         # Clean results
         dlist = []
