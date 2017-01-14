@@ -121,12 +121,10 @@ class sou:
 
         # Normalize text
         docs = []
-        i = 0
         for s in self.speeches_clean:
             words = self._normalize_text(s.body.decode('utf-8')).split()
             tags = ['{}; {}'.format(s.speaker, s.date)]
             docs.append(doc2vec.TaggedDocument(words, tags))
-            i += 1
         self.docs = docs
 
         # Initialize model
@@ -209,12 +207,10 @@ class sou:
     # Get plot colors
     @staticmethod
     def get_colors(speeches_clean):
-        i = 1
         party_no = {}
         party_list = [s.party for s in speeches_clean]
-        for p in list(set(party_list)):
-            party_no[p] = i
-            i += 1
+        for i, p in enumerate(list(set(party_list))):
+            party_no[p] = i + 1
         return party_no
 
     # Get interactive scatter plo.display()t
