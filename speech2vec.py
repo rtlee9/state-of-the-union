@@ -86,7 +86,8 @@ class sou:
             return None
 
     # Convert text to lower-case and strip punctuation/symbols from words
-    def _normalize_text(self, text):
+    @staticmethod
+    def _normalize_text(text):
         # Replace special characters with spaces
         norm_text = text.lower()
         norm_text = re.sub(r'\d', '0', norm_text)
@@ -178,8 +179,8 @@ class sou:
         self.dlist = dlist
 
     # Reduce dimensions with t-SNE
-    def reduce_dims(self, model):
-        vectors = [model.docvecs[v.tags][0] for v in self.docs]
+    def reduce_dims(self):
+        vectors = [self.model.docvecs[v.tags][0] for v in self.docs]
         X_embedded = TSNE(
             n_components=2, perplexity=5).fit_transform(vectors)
         return X_embedded
@@ -189,10 +190,11 @@ class sou:
         return self.reduce_dims(self.model)
 
     # Get plot labels
-    def get_labels(self):
-        prez_list = [s.speaker for s in self.speeches_clean]
-        date_list = [int(s.date[-4:]) for s in self.speeches_clean]
-        party_list = [s.party for s in self.speeches_clean]
+    @staticmethod
+    def get_labels(speeches_clean):
+        prez_list = [s.speaker for s in speeches_clean]
+        date_list = [int(s.date[-4:]) for s in speeches_clean]
+        party_list = [s.party for s in speeches_clean]
         assert len(prez_list) == len(date_list)
 
         labels = zip(prez_list, party_list, date_list)
@@ -200,10 +202,11 @@ class sou:
         return labels
 
     # Get plot colors
-    def get_colors(self):
+    @staticmethod
+    def get_colors(speeches_clean):
         i = 1
         party_no = {}
-        party_list = [s.party for s in self.speeches_clean]
+        party_list = [s.party for s in speeches_clean]
         for p in list(set(party_list)):
             party_no[p] = i
             i += 1
@@ -211,8 +214,8 @@ class sou:
 
     # Get interactive scatter plo.display()t
     def get_plot(self):
-        labels = self.get_labels()
-        party_no = self.get_colors()
+        labels = self.get_labels(self.speeches_clean)
+        party_no = self.get_colors(self.speeches_clean)
         party_list = [s.party for s in self.speeches_clean]
 
         fig = plt.figure(figsize=(10, 10))
