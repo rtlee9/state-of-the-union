@@ -1,6 +1,15 @@
 # coding: utf-8
 
+import sys
+import multiprocessing
 import collections
+import re
+import random
+from datetime import datetime
+
+import numpy as np
+import pandas as pd
+
 from sklearn.manifold import TSNE
 from sklearn import preprocessing
 from sklearn.feature_selection import VarianceThreshold
@@ -8,16 +17,10 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
-import re
+from gensim.models import doc2vec
+
 import matplotlib.pyplot as plt
 import mpld3
-import pandas as pd
-from gensim.models import doc2vec
-import multiprocessing
-import random
-from datetime import datetime
-import sys
-import numpy as np
 
 
 class sou:
